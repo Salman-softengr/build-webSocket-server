@@ -1,12 +1,14 @@
-import WebSocket, { WebSocketServer } from "ws";
-import http from "http";
+import express from "express"
+import WebSocket, { WebSocketServer } from "ws"
 
-const server = http.createServer(function(request: any, response: any) {
-    console.log((new Date() + ' Received request for' + request.url));
-    response.end("hi there");
-});
+const app = express()
+const httpServer = app.listen(8080)
 
-const wss = new WebSocketServer({ server });
+app.get("/", (req, res) => {
+    res.send("Hello from salu");
+})
+
+const wss = new WebSocketServer({ server: httpServer });
 
 let userCount = 0;
 wss.on('connection', function connection(ws) {
@@ -21,8 +23,4 @@ wss.on('connection', function connection(ws) {
     });
     console.log("user connected", ++userCount)  
     ws.send('Hello! Message From Server!!');
-})
-
-server.listen(8080, function() {
-    console.log(new Date + ' Server is listening on port 8080');
 })
